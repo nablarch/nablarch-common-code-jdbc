@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-configuration xmlns="http://tis.co.jp/nablarch/component-configuration"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <import file="db-default.xml"/>
+
+    <!-- DbManagerの設定 -->
+    <component name="codeDbManager" class="nablarch.core.db.transaction.SimpleDbTransactionManager">
+        <property name="dbTransactionName" value="code"/>
+    </component>
+    
+    <component name="codeLoader"
+               class="nablarch.common.code.BasicCodeLoader">
+
+        <property name="dbManager" ref="codeDbManager"/>
+
+        <!-- コードパターンテーブルのスキーマ情報 -->
+        <property name="codePatternSchema">
+            <component class="nablarch.common.code.schema.CodePatternSchema">
+                <property name="tableName" value="CODE_PATTERN"/>
+                <property name="idColumnName" value="CODE_ID01"/>
+                <property name="valueColumnName" value="VALUE"/>
+                <property name="patternColumnNames" value="PATTERN1,PATTERN2,PATTERN3"/>
+            </component>
+        </property>
+
+        <!-- コード名称テーブルのスキーマ情報 -->
+        <property name="codeNameSchema">
+            <component class="nablarch.common.code.schema.CodeNameSchema">
+                <property name="tableName" value="CODE_NAME"/>
+                <property name="idColumnName" value="CODE_ID02"/>
+                <property name="valueColumnName" value="VALUE"/>
+                <property name="langColumnName" value="LANG"/>
+                <property name="sortOrderColumnName" value="SORT_ORDER"/>
+                <property name="nameColumnName" value="NAME"/>
+                <property name="shortNameColumnName" value="SHORT_NAME"/>
+                <property name="optionNameColumnNames" value="NAME_WITH_VALUE,OPTION01"/>
+            </component>
+        </property>
+    </component>
+
+    <!-- 初期化設定 -->
+    <component name="initializer" class="nablarch.core.repository.initialization.BasicApplicationInitializer">
+        <property name="initializeList">
+            <list>
+                <component-ref name="codeLoader"/>
+            </list>
+        </property>
+    </component>
+</component-configuration>

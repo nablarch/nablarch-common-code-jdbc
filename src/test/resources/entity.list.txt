@@ -1,0 +1,2 @@
+nablarch.common.code.CodePattern
+nablarch.common.code.CodeName
