@@ -8,6 +8,14 @@
     <component name="codeDbManager" class="nablarch.core.db.transaction.SimpleDbTransactionManager">
         <property name="dbTransactionName" value="code"/>
     </component>
+  
+    <component name="codeManager" class="nablarch.common.code.BasicCodeManager">
+      <property name="codeDefinitionCache" ref="codeCache" />
+    </component>
+  
+    <component name="codeCache" class="nablarch.core.cache.BasicStaticDataCache">
+      <property name="loader" ref="codeLoader"/>
+    </component>
     
     <component name="codeLoader"
                class="nablarch.common.code.BasicCodeLoader">
@@ -44,6 +52,7 @@
         <property name="initializeList">
             <list>
                 <component-ref name="codeLoader"/>
+                <component-ref name="codeCache" />
             </list>
         </property>
     </component>
