@@ -14,7 +14,7 @@ import javax.persistence.Table;
 public class CodePattern {
     
     public CodePattern() {
-    };
+    }
     
     public CodePattern(String id, String value, String pattern1, String pattern2, String pattern3) {
         this.id = id;

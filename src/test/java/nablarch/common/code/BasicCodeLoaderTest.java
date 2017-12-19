@@ -2,6 +2,7 @@ package nablarch.common.code;
 
 import nablarch.test.support.SystemRepositoryResource;
 import nablarch.test.support.db.helper.DatabaseTestRunner;
+import nablarch.test.support.db.helper.TargetDb;
 import nablarch.test.support.db.helper.VariousDbTestHelper;
 
 import org.junit.Assert;
@@ -34,10 +35,7 @@ public class BasicCodeLoaderTest {
 
     @BeforeClass
     public static void classSetup() throws Exception {
-
-        VariousDbTestHelper.createTable(CodeName.class);
-        VariousDbTestHelper.createTable(CodePattern.class);
-
+        createTable();
         VariousDbTestHelper.setUpTable(
                 new CodePattern("0001", "01", "1", "0", "0"),
                 new CodePattern("0001", "02", "1", "0", "0"),
@@ -50,24 +48,22 @@ public class BasicCodeLoaderTest {
                 new CodePattern("9999", "02", "1", "1", "1")
         );
 
-        VariousDbTestHelper.setUpTable(
-                new CodeName("0001", "01", "en", 2L, "Male", "M", "01:Male", "0001-01-en"),
-                new CodeName("0001", "02", "en", 1L, "Female", "F", "02:Female", "0001-02-en"),
-                new CodeName("0002", "01", "en", 1L, "Initial State", "Initial", "", "0002-01-en"),
-                new CodeName("0002", "02", "en", 2L, "Waiting For Batch Start", "Waiting", "", "0002-02-en"),
-                new CodeName("0002", "03", "en", 3L, "Batch Running", "Running", "", "0002-03-en"),
-                new CodeName("0002", "04", "en", 4L, "Batch Execute Completed Checked", "Completed", "", "0002-04-en"),
-                new CodeName("0002", "05", "en", 5L, "Batch Result Checked", "Checked", "", "0002-05-en"),
-                new CodeName("0001", "01", "ja", 1L, "男性", "男", "01:Male", "0001-01-ja"),
-                new CodeName("0001", "02", "ja", 2L, "女性", "女", "02:Female", "0001-02-ja"),
-                new CodeName("0002", "01", "ja", 1L, "初期状態", "初期", "", "0002-01-ja"),
-                new CodeName("0002", "02", "ja", 2L, "処理開始待ち", "待ち", "", "0002-02-ja"),
-                new CodeName("0002", "03", "ja", 3L, "処理実行中", "実行", "", "0002-03-ja"),
-                new CodeName("0002", "04", "ja", 4L, "処理実行完了", "完了", "", "0002-04-ja"),
-                new CodeName("0002", "05", "ja", 5L, "処理結果確認完了", "確認", "", "0002-05-ja"),
-                new CodeName("9999", "01", "ja", 1L, "[\uD83D\uDE01\uD83D\uDE01\uD83D\uDE01]", "\uD83D\uDE01", "01:[\uD83D\uDE01\uD83D\uDE01\uD83D\uDE01]", ""),
-                new CodeName("9999", "02", "ja", 2L, "[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]", "\uD83D\uDE0E", "02:[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]", "")
-        );
+        insertCodeName("0001", "01", "en", 2L, "Male", "M", "01:Male", "0001-01-en");
+        insertCodeName("0001", "02", "en", 1L, "Female", "F", "02:Female", "0001-02-en");
+        insertCodeName("0002", "01", "en", 1L, "Initial State", "Initial", "", "0002-01-en");
+        insertCodeName("0002", "02", "en", 2L, "Waiting For Batch Start", "Waiting", "", "0002-02-en");
+        insertCodeName("0002", "03", "en", 3L, "Batch Running", "Running", "", "0002-03-en");
+        insertCodeName("0002", "04", "en", 4L, "Batch Execute Completed Checked", "Completed", "", "0002-04-en");
+        insertCodeName("0002", "05", "en", 5L, "Batch Result Checked", "Checked", "", "0002-05-en");
+        insertCodeName("0001", "01", "ja", 1L, "男性", "男", "01:Male", "0001-01-ja");
+        insertCodeName("0001", "02", "ja", 2L, "女性", "女", "02:Female", "0001-02-ja");
+        insertCodeName("0002", "01", "ja", 1L, "初期状態", "初期", "", "0002-01-ja");
+        insertCodeName("0002", "02", "ja", 2L, "処理開始待ち", "待ち", "", "0002-02-ja");
+        insertCodeName("0002", "03", "ja", 3L, "処理実行中", "実行", "", "0002-03-ja");
+        insertCodeName("0002", "04", "ja", 4L, "処理実行完了", "完了", "", "0002-04-ja");
+        insertCodeName("0002", "05", "ja", 5L, "処理結果確認完了", "確認", "", "0002-05-ja");
+        insertCodeName("9999", "01", "ja", 1L, "[\uD83D\uDE01\uD83D\uDE01\uD83D\uDE01]", "\uD83D\uDE01", "01:[\uD83D\uDE01\uD83D\uDE01\uD83D\uDE01]", "");
+        insertCodeName("9999", "02", "ja", 2L, "[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]", "\uD83D\uDE0E", "02:[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]", "");
     }
 
     @Test
@@ -344,5 +340,24 @@ public class BasicCodeLoaderTest {
         assertThat(CodeUtil.getShortName("9999", "02"), is("\uD83D\uDE0E"));
         assertThat(CodeUtil.getOptionalName("9999", "02", "NAME_WITH_VALUE"),
                 is("02:[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]"));
+    }
+    
+    private static void createTable() throws Exception {
+        if (VariousDbTestHelper.getTargetDatabase() == TargetDb.Db.SQL_SERVER) {
+            VariousDbTestHelper.createTable(CodeNameSqlServer.class);
+            VariousDbTestHelper.createTable(CodePattern.class);
+        } else {
+            VariousDbTestHelper.createTable(CodeName.class);
+            VariousDbTestHelper.createTable(CodePattern.class);
+        }
+    }
+    
+    private static void insertCodeName(String id, String value, String lang, Long sortOrder, String name,
+            String shortName, String nameWithValue, String option01) throws Exception {
+        if (VariousDbTestHelper.getTargetDatabase() == TargetDb.Db.SQL_SERVER) {
+            VariousDbTestHelper.insert(new CodeNameSqlServer(id, value, lang, sortOrder, name, shortName, nameWithValue, option01));
+        } else {
+            VariousDbTestHelper.insert(new CodeName(id, value, lang, sortOrder, name, shortName, nameWithValue, option01));
+        }
     }
 }
