@@ -11,12 +11,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "CODE_NAME")
-public class CodeName {
+public class CodeNameSqlServer {
     
-    public CodeName() {
+    public CodeNameSqlServer() {
     }
     
-    public CodeName(String id, String value, String lang, Long sortOrder, String name,
+    public CodeNameSqlServer(String id, String value, String lang, Long sortOrder, String name,
             String shortName, String nameWithValue, String option01) {
         this.id = id;
         this.value = value;
@@ -43,15 +43,15 @@ public class CodeName {
     @Column(name = "SORT_ORDER", length = 2, nullable = false)
     public Long sortOrder;
     
-    @Column(name = "NAME", length = 200)
+    @Column(name = "NAME", length = 200, columnDefinition = "nvarchar(200)")
     public String name;
     
-    @Column(name = "SHORT_NAME", length = 200)
+    @Column(name = "SHORT_NAME", length = 200, columnDefinition = "nvarchar(200)")
     public String shortName;
     
-    @Column(name = "NAME_WITH_VALUE", length = 200)
+    @Column(name = "NAME_WITH_VALUE", length = 200, columnDefinition = "nvarchar(200)")
     public String nameWithValue;
     
-    @Column(name = "OPTION01", length = 200)
+    @Column(name = "OPTION01", length = 200, columnDefinition = "nvarchar(200)")
     public String option01;
 }
