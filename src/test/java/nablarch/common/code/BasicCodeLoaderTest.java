@@ -3,6 +3,8 @@ package nablarch.common.code;
 import nablarch.test.support.SystemRepositoryResource;
 import nablarch.test.support.db.helper.DatabaseTestRunner;
 import nablarch.test.support.db.helper.VariousDbTestHelper;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,11 +14,17 @@ import java.util.List;
 import java.util.Locale;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
+import org.hamcrest.core.Is;
 
 @RunWith(DatabaseTestRunner.class)
 public class BasicCodeLoaderTest {
@@ -37,7 +45,9 @@ public class BasicCodeLoaderTest {
                 new CodePattern("0002", "02", "1", "0", "0"),
                 new CodePattern("0002", "03", "0", "1", "0"),
                 new CodePattern("0002", "04", "0", "1", "0"),
-                new CodePattern("0002", "05", "1", "0", "0")
+                new CodePattern("0002", "05", "1", "0", "0"),
+                new CodePattern("9999", "01", "1", "1", "1"),
+                new CodePattern("9999", "02", "1", "1", "1")
         );
 
         VariousDbTestHelper.setUpTable(
@@ -54,7 +64,9 @@ public class BasicCodeLoaderTest {
                 new CodeName("0002", "02", "ja", 2L, "処理開始待ち", "待ち", "", "0002-02-ja"),
                 new CodeName("0002", "03", "ja", 3L, "処理実行中", "実行", "", "0002-03-ja"),
                 new CodeName("0002", "04", "ja", 4L, "処理実行完了", "完了", "", "0002-04-ja"),
-                new CodeName("0002", "05", "ja", 5L, "処理結果確認完了", "確認", "", "0002-05-ja")
+                new CodeName("0002", "05", "ja", 5L, "処理結果確認完了", "確認", "", "0002-05-ja"),
+                new CodeName("9999", "01", "ja", 1L, "[\uD83D\uDE01\uD83D\uDE01\uD83D\uDE01]", "\uD83D\uDE01", "01:[\uD83D\uDE01\uD83D\uDE01\uD83D\uDE01]", ""),
+                new CodeName("9999", "02", "ja", 2L, "[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]", "\uD83D\uDE0E", "02:[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]", "")
         );
     }
 
@@ -202,7 +214,7 @@ public class BasicCodeLoaderTest {
         BasicCodeLoader codeLoader = repositoryResource.getComponentByType(BasicCodeLoader.class);
         List<Code> allCodes = codeLoader.loadAll();
 
-        assertEquals(2, allCodes.size());
+        assertEquals(3, allCodes.size());
 
         Code code0001 = allCodes.get(0);
         Code code0002 = allCodes.get(1);
@@ -321,5 +333,16 @@ public class BasicCodeLoaderTest {
 
         // 通常の値はそのまま取得できる。
         assertEquals("初期状態", codeLoader.getValue("0002").getName("01", Locale.JAPANESE));
+    }
+
+    /**
+     * {@link CodeUtil}経由でサロゲートペアが扱えることを確認するケース。
+     */
+    @Test
+    public void testSurrogatePair() {
+        assertThat(CodeUtil.getName("9999", "01"), is("[\uD83D\uDE01\uD83D\uDE01\uD83D\uDE01]"));
+        assertThat(CodeUtil.getShortName("9999", "02"), is("\uD83D\uDE0E"));
+        assertThat(CodeUtil.getOptionalName("9999", "02", "NAME_WITH_VALUE"),
+                is("02:[\uD83D\uDE0E\uD83D\uDE0E\uD83D\uDE0E]"));
     }
 }
