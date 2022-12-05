@@ -50,5 +50,21 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
+
+    <profiles>
+        <profile>
+            <id>h2-1</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>${project.basedir}/src/h2/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>${project.basedir}/src/test/resources</directory>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+    </profiles>
 </project>
