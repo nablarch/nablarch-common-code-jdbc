@@ -58,10 +58,10 @@
             <build>
                 <testResources>
                     <testResource>
-                        <directory>${project.basedir}/src/h2/resources</directory>
+                        <directory>${project.basedir}/src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>${project.basedir}/src/test/resources</directory>
+                        <directory>${project.basedir}/src/h2/resources</directory>
                     </testResource>
                 </testResources>
             </build>
